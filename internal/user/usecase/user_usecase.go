@@ -62,3 +62,11 @@ func (uUC *UserUsecase) GetUser(nickname string) (*models.User, error) {
 	}
 	return u, nil
 }
+
+func (uUC *UserUsecase) GetAllUsers(slug string, limit uint64, since string, desc bool) ([]*models.User, error) {
+	res, err := uUC.userRepo.SelectAllUsers(slug, limit, since, desc)
+	if err != nil {
+		return nil, err
+	}
+	return res, nil
+}

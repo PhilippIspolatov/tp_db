@@ -3,6 +3,7 @@ package delivery
 import (
 	"net/http"
 
+	"github.com/ifo16u375/tp_db/internal/forum"
 	"github.com/ifo16u375/tp_db/internal/models"
 	"github.com/ifo16u375/tp_db/internal/tools"
 	"github.com/ifo16u375/tp_db/internal/user"
@@ -12,16 +13,19 @@ import (
 
 type UserHandler struct {
 	userUcase user.Usecase
+	forumUcase forum.Usecase
 }
 
-func NewUserHandler(router *echo.Echo, uUC user.Usecase) *UserHandler {
+func NewUserHandler(router *echo.Echo, uUC user.Usecase, fUC forum.Usecase) *UserHandler {
 	uh := &UserHandler{
 		userUcase: uUC,
+		forumUcase: fUC,
 	}
 
 	router.GET("/user/:nickname/profile", uh.GetUser())
 	router.POST("/user/:nickname/create", uh.CreateUser())
 	router.POST("/user/:nickname/profile", uh.UpdateUser())
+	router.GET("/forum/:slug/users", uh.GetAllUsers())
 
 	return uh
 }
@@ -91,5 +95,41 @@ func (uh *UserHandler) UpdateUser() echo.HandlerFunc {
 			})
 		}
 		return c.JSON(http.StatusOK, u)
+	}
+}
+
+func (uh *UserHandler) GetAllUsers() echo.HandlerFunc {
+
+	type Request struct {
+		Desc bool `json:"desc"`
+		Since string `json:"since"`
+		Limit uint64 `json:"limit"`
+	}
+
+	return func(c echo.Context) error {
+		req := &Request{}
+
+		slug := c.Param("slug")
+
+		if err := c.Bind(req); err != nil {
+			return c.JSON(http.StatusBadRequest, tools.Message{
+				Message:"bad request",
+			})
+		}
+
+		f, err := uh.forumUcase.GetForum(slug)
+		if err != nil {
+			return c.JSON(http.StatusNotFound, tools.Message{
+				Message:"not found",
+			})
+		}
+
+		users, err := uh.userUcase.GetAllUsers(f.Slug, req.Limit, req.Since, req.Desc)
+		if err != nil {
+			return c.JSON(http.StatusInternalServerError, tools.Message {
+				Message:"server error",
+			})
+		}
+		return c.JSON(http.StatusOK, users)
 	}
 }
