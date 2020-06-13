@@ -40,4 +40,4 @@ COPY ./sql/init.sql ./assets/db/postgres/base.sql
 
 # Copying built binary
 COPY --from=builder /build/main .
-CMD service postgresql start && ./server
+CMD service postgresql start && ./main
