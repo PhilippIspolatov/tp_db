@@ -35,7 +35,7 @@ func main() {
 		Format: "method=${method}, uri=${uri}, status=${status}, time=${time_rfc3339_nano} latency=${latency_human}\n",
 	}))
 
-	conn, _ := sql.Open("postgres", "host=localhost port=5432 dbname=docker sslmode=disable")
+	conn, _ := sql.Open("postgres", "host=localhost port=5432 database=docker user=docker password=docker sslmode=disable")
 	if err := conn.Ping(); err != nil {
 		log.Fatal(err)
 	}
