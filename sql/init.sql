@@ -10,12 +10,14 @@ drop function if exists upd_count_of_threads();
 drop function if exists change_edit_status();
 drop function if exists update_vote_count();
 drop function if exists update_vote_count_on_upd();
+drop function if exists upd_mpath_before_insert();
 
 drop trigger if exists upd_post_count on posts;
 drop trigger if exists upd_thread_count on threads;
 drop trigger if exists change_status on posts;
 drop trigger if exists update_vote on votes;
 drop trigger if exists update_vote_on_upd on votes;
+drop trigger if exists upd_mpath on posts;
 
 create table users
 (
@@ -53,11 +55,13 @@ create table posts
     author   varchar not null references users (nickname),
     created  timestamp with time zone default current_timestamp,
     forum    varchar references forums (slug),
-    id       serial primary key,
+    id       serial unique,
     isEdited bool                     default false,
     message  varchar not null,
     parent   int     not null         default 0,
-    thread   int     not null references threads (id)
+    thread   int     not null references threads (id),
+    path int array default '{}',
+    primary key (id, forum)
 );
 
 create table votes
@@ -74,6 +78,18 @@ create table forums_users
     nickname varchar not null references users (nickname) on delete cascade,
     unique (nickname, forum)
 );
+
+create index if not exists nickname on users (nickname);
+create index if not exists owner on forums (owner);
+create index if not exists threads_slug on threads (slug);
+create index if not exists threads_forum_created on threads (forum, created);
+create index if not exists threads_author_forum on threads (author, forum);
+create index if not exists posts_path_id on posts (id, (path[1]));
+create index if not exists posts_path_1 on posts ((path[1]));
+create index if not exists posts_thread_path_id on posts (thread, path, id);
+create index if not exists posts_thread_id_path_parent on posts (thread, id, (path[1]), parent);
+create index if not exists nickname_thread_vote on votes (nickname, thread);
+create index if not exists forum_nickname_fu on forums_users (forum, nickname);
 
 create function upd_count_of_posts() returns trigger as
 $$
@@ -167,3 +183,36 @@ create trigger update_vote_on_upd
     on votes
     for each row
 execute procedure update_vote_count_on_upd();
+
+create function upd_mpath_before_insert() returns trigger as
+$$
+declare
+    parentPath int array;
+    parentPost posts;
+
+begin
+    if new.parent is null then
+        new.path = array_append(new.path, new.id);
+    else
+        select into parentPath path from posts where id = new.parent;
+        new.path = array_append(parentPath, new.id);
+    end if;
+
+    if new.parent = 0 then
+        return new;
+    end if;
+
+    select into parentPost id from posts where id = new.parent;
+    if not FOUND then
+        raise exception 'parent % not found', new.parent;
+    end if;
+
+    return new;
+end;
+$$ LANGUAGE plpgsql;
+
+create trigger upd_mpath
+    before insert
+    on posts
+    for each row
+execute procedure upd_mpath_before_insert();

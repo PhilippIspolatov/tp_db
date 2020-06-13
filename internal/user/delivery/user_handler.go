@@ -22,10 +22,10 @@ func NewUserHandler(router *echo.Echo, uUC user.Usecase, fUC forum.Usecase) *Use
 		forumUcase: fUC,
 	}
 
-	router.GET("/user/:nickname/profile", uh.GetUser())
-	router.POST("/user/:nickname/create", uh.CreateUser())
-	router.POST("/user/:nickname/profile", uh.UpdateUser())
-	router.GET("/forum/:slug/users", uh.GetAllUsers())
+	router.GET("/api/user/:nickname/profile", uh.GetUser())
+	router.POST("/api/user/:nickname/create", uh.CreateUser())
+	router.POST("/api/user/:nickname/profile", uh.UpdateUser())
+	router.GET("/api/forum/:slug/users", uh.GetAllUsers())
 
 	return uh
 }

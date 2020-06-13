@@ -35,7 +35,7 @@ func main() {
 		Format: "method=${method}, uri=${uri}, status=${status}, time=${time_rfc3339_nano} latency=${latency_human}\n",
 	}))
 
-	conn, _ := sql.Open("postgres", "host=localhost port=5432 dbname=forum_db sslmode=disable")
+	conn, _ := sql.Open("postgres", "host=localhost port=5432 dbname=docker sslmode=disable")
 	if err := conn.Ping(); err != nil {
 		log.Fatal(err)
 	}
@@ -60,7 +60,7 @@ func main() {
 	_ = voteDelivery.NewVoteHandler(e, voteUCase, threadUCase)
 	_ = serviceDelivery.NewServiceHandler(e, serviceUCase)
 
-	log.Fatal(e.Start(":8000"))
+	log.Fatal(e.Start(":5000"))
 
 
 }

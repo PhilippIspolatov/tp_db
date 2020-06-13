@@ -17,8 +17,8 @@ func NewServiceHandler(router *echo.Echo, sUC service.Usecase) *ServiceHandler {
 		serviceUcase: sUC,
 	}
 
-	router.POST("/service/clear", sh.ClearDB())
-	router.GET("/service/status", sh.GetStatusDB())
+	router.POST("/api/service/clear", sh.ClearDB())
+	router.GET("/api/service/status", sh.GetStatusDB())
 
 	return sh
 }

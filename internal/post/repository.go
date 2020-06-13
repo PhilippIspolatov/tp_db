@@ -7,4 +7,7 @@ type Repository interface {
 	CheckPostsByParentAndAuthor(posts []*models.Post, id uint64) error
 	SelectPost(id uint64) (*models.Post, error)
 	UpdatePost(post *models.Post) error
+	GetPostsByFlat(threadId uint64, desc bool, since uint64, limit uint64) ([]*models.Post, error)
+	GetPostsByTree(threadId uint64, desc bool, since uint64, limit uint64) ([]*models.Post, error)
+	GetPostsByParentTree(threadId uint64, desc bool, since uint64, limit uint64) ([]*models.Post, error)
 }

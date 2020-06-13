@@ -26,10 +26,10 @@ func NewThreadHandler(router *echo.Echo, tUC thread.Usecase, uUC user.Usecase, f
 		forumUcase:  fUC,
 	}
 
-	router.POST("/forum/:slug/create", th.CreateThread())
-	router.GET("/forum/:slug/threads", th.GetThreads())
-	router.GET("/thread/:slug_or_id/details", th.GetThread())
-	router.POST("/thread/:slug_or_id/details", th.UpdateThread())
+	router.POST("/api/forum/:slug/create", th.CreateThread())
+	router.GET("/api/forum/:slug/threads", th.GetThreads())
+	router.GET("/api/thread/:slug_or_id/details", th.GetThread())
+	router.POST("/api/thread/:slug_or_id/details", th.UpdateThread())
 
 	return th
 }

@@ -29,9 +29,10 @@ func NewPostHandler(router *echo.Echo, pUC post.Usecase, tUC thread.Usecase, uUC
 		forumUcase: fUC,
 	}
 
-	router.POST("/thread/:slug_or_id/create", ph.CreatePosts())
-	router.GET("/post/:id/details", ph.GetPost())
-	router.POST("/post/:id/details", ph.UpdatePost())
+	router.POST("/api/thread/:slug_or_id/create", ph.CreatePosts())
+	router.GET("/api/post/:id/details", ph.GetPost())
+	router.POST("/api/post/:id/details", ph.UpdatePost())
+	router.GET("/api/thread/:slug_or_id/posts", ph.GetSortedPosts())
 
 	return ph
 }
@@ -93,6 +94,7 @@ func (ph *PostHandler) CreatePosts() echo.HandlerFunc {
 					})
 				}
 			}
+
 			if err := ph.postUcase.InsertPosts(posts, t.Id, t.Forum); err != nil {
 				return c.JSON(http.StatusConflict, tools.Message{
 					Message:"conflict",
@@ -171,5 +173,64 @@ func (ph *PostHandler) GetPost() echo.HandlerFunc {
 			}
 		}
 		return c.JSON(http.StatusOK, res)
+	}
+}
+
+func (ph *PostHandler) GetSortedPosts() echo.HandlerFunc {
+	type Request struct {
+		Sort string `json:"sort"`
+		Desc bool `json:"desc"`
+		Since uint64 `json:"since"`
+		Limit uint64 `json:"limit"`
+	}
+	return func(c echo.Context) error {
+		req := &Request{}
+
+		if err := c.Bind(req); err != nil {
+			return c.JSON(http.StatusBadRequest, tools.Message{
+				Message: "bad request",
+			})
+		}
+
+		slug := c.Param("slug_or_id")
+
+		id, err := strconv.ParseUint(slug, 10, 64)
+
+		if err != nil {
+			t, err := ph.threadUcase.SelectThreadBySlug(slug)
+			if err != nil {
+				return c.JSON(http.StatusNotFound, tools.Message{
+					Message: "not found",
+				})
+			}
+
+			posts, err := ph.postUcase.SelectSortesPosts(t.Id, req.Sort, req.Desc, req.Since, req.Limit)
+
+			if err != nil {
+				return c.JSON(http.StatusNotFound, tools.Message{
+					Message: "not found",
+				})
+			}
+
+			return c.JSON(http.StatusOK, posts)
+		}
+
+		_, err = ph.threadUcase.SelectThreadById(id)
+
+		if err != nil {
+			return c.JSON(http.StatusNotFound, tools.Message{
+				Message: "not found",
+			})
+		}
+
+		posts, err := ph.postUcase.SelectSortesPosts(id, req.Sort, req.Desc, req.Since, req.Limit)
+
+		if err != nil {
+			return c.JSON(http.StatusNotFound, tools.Message{
+				Message: "not found",
+			})
+		}
+
+		return c.JSON(http.StatusOK, posts)
 	}
 }

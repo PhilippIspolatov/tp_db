@@ -26,8 +26,8 @@ func (vr *VoteRepository) Insert(vote *models.Vote) error {
 }
 
 func (vr *VoteRepository) Select(vote *models.Vote) error {
-	if err := vr.db.QueryRow("SELECT thread FROM votes WHERE thread=$1 "+
-		"AND lower(nickname)=lower($2)", vote.Thread, vote.Nickname).Scan(&vote.Thread); err != nil {
+	if err := vr.db.QueryRow("SELECT thread, voice FROM votes WHERE thread=$1 "+
+		"AND lower(nickname)=lower($2)", vote.Thread, vote.Nickname).Scan(&vote.Thread, &vote.Voice); err != nil {
 		return err
 	}
 	return nil

@@ -22,7 +22,7 @@ func NewVoteHandler(router *echo.Echo, vUC vote.Usecase, tUC thread.Usecase) *Vo
 		threadUcase :tUC,
 	}
 
-	router.POST("/thread/:slug_or_id/vote", vh.CreateVote())
+	router.POST("/api/thread/:slug_or_id/vote", vh.CreateVote())
 
 	return vh
 }
@@ -31,6 +31,7 @@ func (vh *VoteHandler) CreateVote() echo.HandlerFunc {
 	return func(c echo.Context) error {
 		slug := c.Param("slug_or_id")
 		v := &models.Vote{}
+		oldV := &models.Vote{}
 		if err := c.Bind(v); err != nil {
 			return c.JSON(http.StatusBadRequest, tools.Message{
 				Message:"bad request",
@@ -46,21 +47,26 @@ func (vh *VoteHandler) CreateVote() echo.HandlerFunc {
 				})
 			}
 			v.Thread = t.Id
-			if err := vh.voteUcase.SelectVote(v); err == nil {
+			oldV.Thread = t.Id
+			oldV.Nickname = v.Nickname
+			if err := vh.voteUcase.SelectVote(oldV); err == nil {
+				t, _ := vh.threadUcase.SelectThreadById(v.Thread)
+				t.Votes = t.Votes - oldV.Voice + v.Voice
 				if err = vh.voteUcase.UpdateVote(v); err != nil {
 					return c.JSON(http.StatusBadRequest, tools.Message{
-						Message:"bad request",
+						Message:"bad request1",
 					})
 				}
-				t, _ := vh.threadUcase.SelectThreadById(v.Thread)
+
 				return c.JSON(http.StatusOK, t)
 			}
+			t, err = vh.threadUcase.SelectThreadBySlug(slug)
+			t.Votes += v.Voice
 			if err := vh.voteUcase.InsertVote(v); err != nil {
 				return c.JSON(http.StatusNotFound, tools.Message{
 					Message:"not found",
 				})
 			}
-			t, err = vh.threadUcase.SelectThreadBySlug(slug)
 			return c.JSON(http.StatusOK, t)
 		}
 		t, err := vh.threadUcase.SelectThreadById(id)
@@ -70,21 +76,26 @@ func (vh *VoteHandler) CreateVote() echo.HandlerFunc {
 			})
 		}
 		v.Thread = t.Id
-		if err := vh.voteUcase.SelectVote(v); err == nil {
+		oldV.Thread = t.Id
+		oldV.Nickname = v.Nickname
+		if err := vh.voteUcase.SelectVote(oldV); err == nil {
+			t, _ := vh.threadUcase.SelectThreadById(v.Thread)
+			t.Votes = t.Votes - oldV.Voice + v.Voice
 			if err = vh.voteUcase.UpdateVote(v); err != nil {
 				return c.JSON(http.StatusBadRequest, tools.Message{
-					Message:"bad request",
+					Message:"bad request2",
 				})
 			}
-			t, _ := vh.threadUcase.SelectThreadById(v.Thread)
+
 			return c.JSON(http.StatusOK, t)
 		}
+		t, err = vh.threadUcase.SelectThreadById(id)
+		t.Votes += v.Voice
 		if err := vh.voteUcase.InsertVote(v); err != nil {
 			return c.JSON(http.StatusNotFound, tools.Message{
 				Message:"not found",
 			})
 		}
-		t, err = vh.threadUcase.SelectThreadById(id)
 		return c.JSON(http.StatusOK, t)
 
 	}

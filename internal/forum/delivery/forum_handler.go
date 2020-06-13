@@ -21,8 +21,8 @@ func NewForumHandler(router *echo.Echo, fUC forum.Usecase, uUC user.Usecase) *Fo
 		userUcase:  uUC,
 	}
 
-	router.GET("/forum/:slug/details", fh.GetForum())
-	router.POST("/forum/create", fh.CreateForum())
+	router.GET("/api/forum/:slug/details", fh.GetForum())
+	router.POST("/api/forum/create", fh.CreateForum())
 
 	return fh
 }

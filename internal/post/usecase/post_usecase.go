@@ -43,3 +43,25 @@ func (pUC *PostUsecase) UpdatePost(post *models.Post) error {
 	}
 	return nil
 }
+
+func (pUC *PostUsecase) SelectSortesPosts(threadId uint64, sortType string, desc bool, since uint64, limit uint64) ([]*models.Post, error) {
+	var err error
+	posts := []*models.Post{}
+
+	switch sortType {
+	case "flat":
+		posts, err = pUC.postRepo.GetPostsByFlat(threadId, desc, since, limit)
+	case "tree":
+		posts, err = pUC.postRepo.GetPostsByTree(threadId, desc, since, limit)
+	case "parent_tree":
+		posts, err = pUC.postRepo.GetPostsByParentTree(threadId, desc, since, limit)
+	default:
+		posts, err = pUC.postRepo.GetPostsByFlat(threadId, desc, since, limit)
+	}
+
+	if err != nil {
+		return nil, err
+	}
+
+	return posts, err
+}
