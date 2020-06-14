@@ -1,6 +1,6 @@
 package thread
 
-import "github.com/ifo16u375/tp_db/internal/models"
+import "github.com/PhilippIspolatov/tp_db/internal/models"
 
 type Repository interface {
 	Insert(thread *models.Thread) error

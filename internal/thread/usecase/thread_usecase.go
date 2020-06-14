@@ -1,8 +1,8 @@
 package usecase
 
 import (
-	"github.com/ifo16u375/tp_db/internal/models"
-	"github.com/ifo16u375/tp_db/internal/thread"
+	"github.com/PhilippIspolatov/tp_db/internal/models"
+	"github.com/PhilippIspolatov/tp_db/internal/thread"
 )
 
 type ThreadUsecase struct {

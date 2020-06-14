@@ -1,6 +1,6 @@
 package thread
 
-import "github.com/ifo16u375/tp_db/internal/models"
+import "github.com/PhilippIspolatov/tp_db/internal/models"
 
 type Usecase interface {
 	InsertThread(thread *models.Thread) error

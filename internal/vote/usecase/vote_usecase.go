@@ -1,8 +1,8 @@
 package usecase
 
 import (
-	"github.com/ifo16u375/tp_db/internal/models"
-	"github.com/ifo16u375/tp_db/internal/vote"
+	"github.com/PhilippIspolatov/tp_db/internal/models"
+	"github.com/PhilippIspolatov/tp_db/internal/vote"
 )
 
 type VoteUsecase struct {

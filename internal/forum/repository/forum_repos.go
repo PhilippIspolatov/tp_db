@@ -3,8 +3,8 @@ package repository
 import (
 	"database/sql"
 
-	"github.com/ifo16u375/tp_db/internal/forum"
-	"github.com/ifo16u375/tp_db/internal/models"
+	"github.com/PhilippIspolatov/tp_db/internal/forum"
+	"github.com/PhilippIspolatov/tp_db/internal/models"
 	"github.com/sirupsen/logrus"
 )
 

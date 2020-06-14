@@ -4,11 +4,11 @@ import (
 	"net/http"
 	"strconv"
 
-	"github.com/ifo16u375/tp_db/internal/forum"
-	"github.com/ifo16u375/tp_db/internal/models"
-	"github.com/ifo16u375/tp_db/internal/thread"
-	"github.com/ifo16u375/tp_db/internal/tools"
-	"github.com/ifo16u375/tp_db/internal/user"
+	"github.com/PhilippIspolatov/tp_db/internal/forum"
+	"github.com/PhilippIspolatov/tp_db/internal/models"
+	"github.com/PhilippIspolatov/tp_db/internal/thread"
+	"github.com/PhilippIspolatov/tp_db/internal/tools"
+	"github.com/PhilippIspolatov/tp_db/internal/user"
 	"github.com/labstack/echo"
 	"github.com/sirupsen/logrus"
 )

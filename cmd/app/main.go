@@ -42,7 +42,7 @@ func main() {
 	// 	log.Fatal(err)
 	// }
 
-	db, err := db.NewDataBase("")
+	db, err := db.NewDataBase("./db.json")
 
 	if err != nil {
 		logrus.Info(err)

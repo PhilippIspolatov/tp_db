@@ -1,8 +1,8 @@
 package usecase
 
 import (
-	"github.com/ifo16u375/tp_db/internal/models"
-	"github.com/ifo16u375/tp_db/internal/post"
+	"github.com/PhilippIspolatov/tp_db/internal/models"
+	"github.com/PhilippIspolatov/tp_db/internal/post"
 )
 
 type PostUsecase struct {

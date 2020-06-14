@@ -4,9 +4,9 @@ import (
 	"database/sql"
 	"fmt"
 
-	"github.com/ifo16u375/tp_db/internal/models"
-	"github.com/ifo16u375/tp_db/internal/tools"
-	"github.com/ifo16u375/tp_db/internal/user"
+	"github.com/PhilippIspolatov/tp_db/internal/models"
+	"github.com/PhilippIspolatov/tp_db/internal/tools"
+	"github.com/PhilippIspolatov/tp_db/internal/user"
 	"github.com/sirupsen/logrus"
 )
 

@@ -3,8 +3,8 @@ package repository
 import (
 	"database/sql"
 
-	"github.com/ifo16u375/tp_db/internal/models"
-	"github.com/ifo16u375/tp_db/internal/service"
+	"github.com/PhilippIspolatov/tp_db/internal/models"
+	"github.com/PhilippIspolatov/tp_db/internal/service"
 )
 
 type ServiceRepository struct {

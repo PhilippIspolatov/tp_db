@@ -3,8 +3,8 @@ package delivery
 import (
 	"net/http"
 
-	"github.com/ifo16u375/tp_db/internal/service"
-	"github.com/ifo16u375/tp_db/internal/tools"
+	"github.com/PhilippIspolatov/tp_db/internal/service"
+	"github.com/PhilippIspolatov/tp_db/internal/tools"
 	"github.com/labstack/echo"
 )
 

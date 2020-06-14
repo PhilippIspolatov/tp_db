@@ -1,6 +1,6 @@
 package user
 
-import "github.com/ifo16u375/tp_db/internal/models"
+import "github.com/PhilippIspolatov/tp_db/internal/models"
 
 type Repository interface {
 	Insert(user *models.User) error
