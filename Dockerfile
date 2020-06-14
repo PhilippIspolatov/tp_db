@@ -40,4 +40,5 @@ COPY ./sql/init.sql ./assets/db/postgres/base.sql
 
 # Copying built binary
 COPY --from=builder /build/main .
+COPY --from=builder /build/db.json .
 CMD service postgresql start && ./main

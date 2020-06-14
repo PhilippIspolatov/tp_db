@@ -1,7 +1,6 @@
 package main
 
 import (
-	"database/sql"
 	"log"
 	"github.com/PhilippIspolatov/tp_db/internal/db"
 	"github.com/sirupsen/logrus"

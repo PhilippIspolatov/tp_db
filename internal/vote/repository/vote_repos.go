@@ -1,17 +1,16 @@
 package repository
 
 import (
-	"database/sql"
-
 	"github.com/PhilippIspolatov/tp_db/internal/models"
 	"github.com/PhilippIspolatov/tp_db/internal/vote"
+	"github.com/jackc/pgx"
 )
 
 type VoteRepository struct {
-	db *sql.DB
+	db *pgx.ConnPool
 }
 
-func NewVoteRepository(db *sql.DB) vote.Repository {
+func NewVoteRepository(db *pgx.ConnPool) vote.Repository {
 	return &VoteRepository{
 		db:db,
 	}

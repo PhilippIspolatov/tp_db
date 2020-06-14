@@ -90,8 +90,9 @@ func (uh *UserHandler) UpdateUser() echo.HandlerFunc {
 				return c.JSON(http.StatusNotFound, tools.Message{
 					Message: "Not found"})
 			}
-			return c.JSON(http.StatusBadRequest, tools.Error{
-				ErrMsg: tools.BadRequest.Error(),
+			logrus.Info("UserErr", err)
+			return c.JSON(http.StatusNotFound, tools.Error{
+				ErrMsg: tools.ErrNotFound.Error(),
 			})
 		}
 		return c.JSON(http.StatusOK, u)

@@ -1,18 +1,16 @@
 package repository
 
 import (
-	"database/sql"
-
 	"github.com/PhilippIspolatov/tp_db/internal/models"
 	"github.com/PhilippIspolatov/tp_db/internal/thread"
-
+	"github.com/jackc/pgx"
 )
 
 type ThreadRepository struct {
-	db *sql.DB
+	db *pgx.ConnPool
 }
 
-func NewThreadRepository(db *sql.DB) thread.Repository {
+func NewThreadRepository(db *pgx.ConnPool) thread.Repository {
 	return &ThreadRepository{
 		db: db,
 	}
@@ -80,7 +78,7 @@ func (tr *ThreadRepository) SelectById(id uint64) (*models.Thread, error) {
 func (tr *ThreadRepository) Select(slug string, limit uint64, since string, desc bool) ([]*models.Thread, error) {
 	t := []*models.Thread{}
 	var err error
-	var res *sql.Rows
+	var res *pgx.Rows
 
 	QueryString := "SELECT * FROM threads where lower(forum)=lower($1) "
 

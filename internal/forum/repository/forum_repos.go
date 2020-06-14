@@ -1,18 +1,17 @@
 package repository
 
 import (
-	"database/sql"
-
 	"github.com/PhilippIspolatov/tp_db/internal/forum"
 	"github.com/PhilippIspolatov/tp_db/internal/models"
+	"github.com/jackc/pgx"
 	"github.com/sirupsen/logrus"
 )
 
 type ForumRepository struct {
-	db *sql.DB
+	db *pgx.ConnPool
 }
 
-func NewForumRepository(db *sql.DB) forum.Repository {
+func NewForumRepository(db *pgx.ConnPool) forum.Repository {
 	return &ForumRepository{
 		db: db,
 	}

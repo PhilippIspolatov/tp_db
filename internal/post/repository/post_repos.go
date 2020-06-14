@@ -1,19 +1,19 @@
 package repository
 
 import (
-	"database/sql"
 	"fmt"
 
 	"github.com/PhilippIspolatov/tp_db/internal/models"
 	"github.com/PhilippIspolatov/tp_db/internal/post"
 	"github.com/PhilippIspolatov/tp_db/internal/tools"
+	"github.com/jackc/pgx"
 )
 
 type PostRepository struct {
-	db *sql.DB
+	db *pgx.ConnPool
 }
 
-func NewPostRepository(db *sql.DB) post.Repository {
+func NewPostRepository(db *pgx.ConnPool) post.Repository {
 	return &PostRepository{
 		db: db,
 	}
@@ -101,11 +101,11 @@ func (pr *PostRepository) CheckPostsByParentAndAuthor(posts []*models.Post, id u
 
 func (pr *PostRepository) SelectPost(id uint64) (*models.Post, error) {
 	p := &models.Post{}
-	var rb interface{}
 
-	if err := pr.db.QueryRow("SELECT * FROM posts WHERE id = $1", id).Scan(
+	if err := pr.db.QueryRow("SELECT author, created, forum, id, isEdited, message, " +
+		"parent, thread FROM posts WHERE id = $1", id).Scan(
 		&p.Author, &p.Created, &p.Forum, &p.Id, &p.IsEdited,
-		&p.Message, &p.Parent, &p.Thread, &rb); err != nil {
+		&p.Message, &p.Parent, &p.Thread); err != nil {
 		return nil, err
 	}
 	return p, nil
@@ -125,9 +125,8 @@ func (pr *PostRepository) UpdatePost(post *models.Post) error {
 func (pr *PostRepository) GetPostsByFlat(threadId uint64, desc bool, since uint64, limit uint64) ([]*models.Post, error) {
 	posts := []*models.Post{}
 
-	var rb interface{}
-
-	QueryString := fmt.Sprintf("SELECT * FROM posts WHERE thread = %d ", threadId)
+	QueryString := fmt.Sprintf("SELECT author, created, forum, id, isEdited, message, " +
+		"parent, thread FROM posts WHERE thread = %d ", threadId)
 
 	if since > 0 {
 		if desc {
@@ -156,7 +155,7 @@ func (pr *PostRepository) GetPostsByFlat(threadId uint64, desc bool, since uint6
 	for rows.Next() {
 		p := &models.Post{}
 
-		if err := rows.Scan(&p.Author, &p.Created, &p.Forum, &p.Id, &p.IsEdited, &p.Message, &p.Parent, &p.Thread, &rb); err != nil {
+		if err := rows.Scan(&p.Author, &p.Created, &p.Forum, &p.Id, &p.IsEdited, &p.Message, &p.Parent, &p.Thread); err != nil {
 			return nil, err
 		}
 
@@ -169,9 +168,8 @@ func (pr *PostRepository) GetPostsByFlat(threadId uint64, desc bool, since uint6
 func (pr *PostRepository) GetPostsByTree(threadId uint64, desc bool, since uint64, limit uint64) ([]*models.Post, error) {
 	posts := []*models.Post{}
 
-	var rb interface{}
-
-	QueryString := fmt.Sprintf("SELECT * FROM posts WHERE thread = %d ", threadId)
+	QueryString := fmt.Sprintf("SELECT author, created, forum, id, isEdited, message, " +
+		"parent, thread FROM posts WHERE thread = %d ", threadId)
 
 	if since > 0 {
 		if desc {
@@ -201,7 +199,7 @@ func (pr *PostRepository) GetPostsByTree(threadId uint64, desc bool, since uint6
 		p := &models.Post{}
 
 		if err := rows.Scan(&p.Author, &p.Created, &p.Forum, &p.Id, &p.IsEdited, &p.Message,
-			&p.Parent, &p.Thread, &rb); err != nil {
+			&p.Parent, &p.Thread); err != nil {
 			return nil, err
 		}
 
@@ -214,9 +212,8 @@ func (pr *PostRepository) GetPostsByTree(threadId uint64, desc bool, since uint6
 func (pr *PostRepository) GetPostsByParentTree(threadId uint64, desc bool, since uint64, limit uint64) ([]*models.Post, error) {
 	posts := []*models.Post{}
 
-	var rb interface{}
-
-	QueryString := fmt.Sprintf("SELECT * FROM posts WHERE path[1] IN (SELECT id FROM posts WHERE thread = %d AND parent = 0 ", threadId)
+	QueryString := fmt.Sprintf("SELECT author, created, forum, id, isEdited, message, " +
+	"parent, thread FROM posts WHERE path[1] IN (SELECT id FROM posts WHERE thread = %d AND parent = 0 ", threadId)
 
 	if since > 0 {
 		if desc {
@@ -252,7 +249,7 @@ func (pr *PostRepository) GetPostsByParentTree(threadId uint64, desc bool, since
 		p := &models.Post{}
 
 		if err := rows.Scan(&p.Author, &p.Created, &p.Forum, &p.Id, &p.IsEdited, &p.Message,
-			&p.Parent, &p.Thread, &rb); err != nil {
+			&p.Parent, &p.Thread); err != nil {
 			return nil, err
 		}
 

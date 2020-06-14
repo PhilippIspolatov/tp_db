@@ -7,14 +7,15 @@ import (
 	"github.com/PhilippIspolatov/tp_db/internal/models"
 	"github.com/PhilippIspolatov/tp_db/internal/tools"
 	"github.com/PhilippIspolatov/tp_db/internal/user"
+	"github.com/jackc/pgx"
 	"github.com/sirupsen/logrus"
 )
 
 type UserRepository struct {
-	db *sql.DB
+	db *pgx.ConnPool
 }
 
-func NewUserRepository(db *sql.DB) user.Repository {
+func NewUserRepository(db *pgx.ConnPool) user.Repository {
 	return &UserRepository{
 		db: db,
 	}
